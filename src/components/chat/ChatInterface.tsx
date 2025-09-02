@@ -11,11 +11,22 @@ interface Message {
   emotion?: 'positive' | 'neutral' | 'negative' | 'crisis';
 }
 
-const ChatInterface = () => {
+interface AIModel {
+  id: string;
+  name: string;
+  description: string;
+  personality: string;
+}
+
+interface ChatInterfaceProps {
+  selectedModel?: AIModel;
+}
+
+const ChatInterface = ({ selectedModel }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm Aura, your emotional support companion. I'm here to listen and support you. How are you feeling today?",
+      content: `Hello! I'm ${selectedModel?.name || 'Aura'}, your emotional support companion. I'm here to listen and support you. How are you feeling today?`,
       isUser: false,
       timestamp: new Date(),
       emotion: 'positive'
@@ -35,6 +46,7 @@ const ChatInterface = () => {
 
   const generateResponse = (userMessage: string): { content: string; emotion: Message['emotion'] } => {
     const lowerMessage = userMessage.toLowerCase();
+    const companionName = selectedModel?.name || 'Aura';
     
     // Crisis detection keywords
     if (lowerMessage.includes('hurt myself') || lowerMessage.includes('want to die') || lowerMessage.includes('suicide')) {
@@ -44,35 +56,65 @@ const ChatInterface = () => {
       };
     }
 
+    // Customize responses based on selected AI model personality
+    const getPersonalizedResponse = (baseContent: string, emotion: Message['emotion']) => {
+      if (!selectedModel) return { content: baseContent, emotion };
+      
+      switch (selectedModel.id) {
+        case 'bhagwatilal':
+          return {
+            content: baseContent.replace(/I'm/g, `I, ${companionName}, am`).replace(/Let's/g, 'Let us') + " Remember, every emotion teaches us something valuable about our journey.",
+            emotion
+          };
+        case 'sophia':
+          return {
+            content: "From an analytical perspective, " + baseContent.toLowerCase() + " Would it help if we break this down into smaller, manageable parts?",
+            emotion
+          };
+        case 'zen':
+          return {
+            content: baseContent + " Take a moment to breathe with me and center yourself in this present moment.",
+            emotion
+          };
+        case 'alex':
+          return {
+            content: baseContent.replace(/I'm/g, "I'm").replace(/your/g, "your") + " I've been there too, and you're definitely not alone in feeling this way.",
+            emotion
+          };
+        default:
+          return { content: baseContent, emotion };
+      }
+    };
+
     // Positive responses
     if (lowerMessage.includes('happy') || lowerMessage.includes('good') || lowerMessage.includes('great')) {
-      return {
-        content: "I'm so glad to hear you're feeling positive! It's wonderful when we can recognize and appreciate the good moments. What's contributing to these good feelings today?",
-        emotion: 'positive'
-      };
+      return getPersonalizedResponse(
+        "I'm so glad to hear you're feeling positive! It's wonderful when we can recognize and appreciate the good moments. What's contributing to these good feelings today?",
+        'positive'
+      );
     }
 
     // Negative emotions
     if (lowerMessage.includes('sad') || lowerMessage.includes('depressed') || lowerMessage.includes('down')) {
-      return {
-        content: "I hear that you're going through a difficult time, and I want you to know that your feelings are completely valid. It takes courage to share how you're feeling. Can you tell me a bit more about what's been weighing on your mind?",
-        emotion: 'negative'
-      };
+      return getPersonalizedResponse(
+        "I hear that you're going through a difficult time, and I want you to know that your feelings are completely valid. It takes courage to share how you're feeling. Can you tell me a bit more about what's been weighing on your mind?",
+        'negative'
+      );
     }
 
     // Anxiety responses
     if (lowerMessage.includes('anxious') || lowerMessage.includes('worried') || lowerMessage.includes('panic')) {
-      return {
-        content: "Anxiety can feel overwhelming, but you're not alone in this. Let's try to slow down together. Can you take a deep breath with me? In for 4 counts... hold for 4... out for 4. What's been triggering these anxious feelings?",
-        emotion: 'negative'
-      };
+      return getPersonalizedResponse(
+        "Anxiety can feel overwhelming, but you're not alone in this. Let's try to slow down together. Can you take a deep breath with me? In for 4 counts... hold for 4... out for 4. What's been triggering these anxious feelings?",
+        'negative'
+      );
     }
 
     // Default empathetic response
-    return {
-      content: "Thank you for sharing that with me. I'm here to listen and support you through whatever you're experiencing. Your feelings matter, and it's okay to feel however you're feeling right now. Would you like to tell me more about what's on your mind?",
-      emotion: 'neutral'
-    };
+    return getPersonalizedResponse(
+      "Thank you for sharing that with me. I'm here to listen and support you through whatever you're experiencing. Your feelings matter, and it's okay to feel however you're feeling right now. Would you like to tell me more about what's on your mind?",
+      'neutral'
+    );
   };
 
   const handleSendMessage = async () => {
@@ -134,8 +176,8 @@ const ChatInterface = () => {
             <Heart className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-white">Aura Support</h3>
-            <p className="text-sm text-white/80">Always here to listen</p>
+            <h3 className="font-semibold text-white">{selectedModel?.name || 'Aura Support'}</h3>
+            <p className="text-sm text-white/80">{selectedModel?.description || 'Always here to listen'}</p>
           </div>
         </div>
       </div>

@@ -71,13 +71,12 @@ const Index = () => {
                 <p className="text-muted-foreground mb-6">
                   Experience our supportive AI companion with a live demo.
                 </p>
-                <Button 
-                  className="btn-hero w-full"
-                  onClick={() => setShowChat(true)}
-                >
-                  <MessageCircle className="w-5 h-5 mr-2" />
-                  Open Chat Demo
-                </Button>
+                <a href="/chat">
+                  <Button className="btn-hero w-full">
+                    <MessageCircle className="w-5 h-5 mr-2" />
+                    Start Chatting Now
+                  </Button>
+                </a>
               </div>
             </div>
           </div>

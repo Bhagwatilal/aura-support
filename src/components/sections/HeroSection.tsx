@@ -37,14 +37,18 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-            <Button className="btn-hero text-lg px-8 py-4">
-              <MessageCircle className="w-5 h-5 mr-2" />
-              Start Your First Chat
-            </Button>
-            <Button variant="outline" className="btn-secondary text-lg px-8 py-4">
-              <Shield className="w-5 h-5 mr-2" />
-              Learn About Safety
-            </Button>
+            <a href="/chat">
+              <Button className="btn-hero text-lg px-8 py-4">
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Start Your First Chat
+              </Button>
+            </a>
+            <a href="/safety">
+              <Button variant="outline" className="btn-secondary text-lg px-8 py-4">
+                <Shield className="w-5 h-5 mr-2" />
+                Learn About Safety
+              </Button>
+            </a>
           </div>
 
           {/* Trust Indicators */}

@@ -98,10 +98,12 @@ const FeaturesSection = () => {
             <p className="text-muted-foreground mb-6">
               Join thousands who have found comfort and guidance through our emotional support platform.
             </p>
-            <button className="btn-hero">
-              <MessageSquare className="w-5 h-5 mr-2" />
-              Start Your Journey Today
-            </button>
+            <a href="/chat">
+              <button className="btn-hero">
+                <MessageSquare className="w-5 h-5 mr-2" />
+                Start Your Journey Today
+              </button>
+            </a>
           </div>
         </div>
       </div>

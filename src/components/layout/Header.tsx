@@ -27,16 +27,18 @@ const Header = () => {
             <a href="#how-it-works" className="text-muted-foreground hover:text-primary transition-smooth">
               How it works
             </a>
-            <a href="#safety" className="text-muted-foreground hover:text-primary transition-smooth">
+            <a href="/safety" className="text-muted-foreground hover:text-primary transition-smooth">
               Safety
             </a>
             <Button variant="outline" className="btn-secondary">
               Sign In
             </Button>
-            <Button className="btn-hero">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Start Chat
-            </Button>
+            <a href="/chat">
+              <Button className="btn-hero">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Start Chat
+              </Button>
+            </a>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -66,7 +68,7 @@ const Header = () => {
               How it works
             </a>
             <a 
-              href="#safety" 
+              href="/safety" 
               className="block text-muted-foreground hover:text-primary transition-smooth"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -76,10 +78,12 @@ const Header = () => {
               <Button variant="outline" className="btn-secondary">
                 Sign In
               </Button>
-              <Button className="btn-hero">
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Start Chat
-              </Button>
+              <a href="/chat">
+                <Button className="btn-hero">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Start Chat
+                </Button>
+              </a>
             </div>
           </nav>
         )}
