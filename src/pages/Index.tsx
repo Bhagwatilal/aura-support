@@ -147,10 +147,10 @@ const Index = () => {
             Providing compassionate AI-powered emotional support, 24/7.
           </p>
           <div className="flex justify-center space-x-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-primary transition-colors">Crisis Resources</a>
-            <a href="#" className="hover:text-primary transition-colors">Contact Support</a>
+            <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
+            <a href="/terms" className="hover:text-primary transition-colors">Terms of Service</a>
+            <a href="/crisis-resources" className="hover:text-primary transition-colors">Crisis Resources</a>
+            <a href="/contact" className="hover:text-primary transition-colors">Contact Support</a>
           </div>
         </div>
       </footer>

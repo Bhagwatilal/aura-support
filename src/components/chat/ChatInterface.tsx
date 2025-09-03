@@ -44,18 +44,68 @@ const ChatInterface = ({ selectedModel }: ChatInterfaceProps) => {
     scrollToBottom();
   }, [messages]);
 
-  const generateResponse = (userMessage: string): { content: string; emotion: Message['emotion'] } => {
+  // Generate AI response using Gemini API
+  const generateResponse = async (userMessage: string): Promise<{ content: string; emotion: Message['emotion'] }> => {
+    try {
+      const lowerMessage = userMessage.toLowerCase();
+      
+      // Crisis detection keywords
+      const crisisKeywords = ['suicide', 'kill myself', 'end it all', 'want to die', 'hurt myself', 'no point', 'give up'];
+      const isCrisis = crisisKeywords.some(keyword => lowerMessage.includes(keyword));
+      
+      if (isCrisis) {
+        return {
+          content: "I'm really concerned about what you're sharing. Your life has value, and there are people who want to help. Please reach out to the 988 Suicide & Crisis Lifeline at 988, or contact emergency services at 911. I'm here to support you, but professional help is what you need right now. You don't have to go through this alone.",
+          emotion: 'crisis'
+        };
+      }
+
+      // Call Gemini API through Supabase edge function
+      const response = await fetch('/functions/v1/gemini-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          modelName: 'projects/1385850728/locations/europe-west1/models/787316296185282560@1'
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // Determine emotion based on user message
+      const negativeKeywords = ['sad', 'depressed', 'angry', 'frustrated', 'alone', 'worried', 'anxious', 'stressed'];
+      const positiveKeywords = ['happy', 'good', 'great', 'excited', 'better', 'thankful', 'proud', 'accomplished'];
+      
+      const hasNegative = negativeKeywords.some(keyword => lowerMessage.includes(keyword));
+      const hasPositive = positiveKeywords.some(keyword => lowerMessage.includes(keyword));
+      
+      let emotion: Message['emotion'] = 'neutral';
+      if (hasNegative) emotion = 'negative';
+      else if (hasPositive) emotion = 'positive';
+
+      return {
+        content: data.generatedText || "I understand what you're sharing. Can you tell me more about how you're feeling?",
+        emotion
+      };
+    } catch (error) {
+      console.error('Error calling Gemini API:', error);
+      
+      // Fallback to original logic
+      return getPersonalizedFallbackResponse(userMessage);
+    }
+  };
+
+  // Fallback response logic (original generateResponse)
+  const getPersonalizedFallbackResponse = (userMessage: string): { content: string; emotion: Message['emotion'] } => {
     const lowerMessage = userMessage.toLowerCase();
     const companionName = selectedModel?.name || 'Aura';
     
-    // Crisis detection keywords
-    if (lowerMessage.includes('hurt myself') || lowerMessage.includes('want to die') || lowerMessage.includes('suicide')) {
-      return {
-        content: "I'm really concerned about what you're going through. Your feelings are valid, but I want you to know that you don't have to face this alone. Please consider reaching out to a crisis helpline: National Suicide Prevention Lifeline: 988. Would you like me to help you find more resources?",
-        emotion: 'crisis'
-      };
-    }
-
     // Customize responses based on selected AI model personality
     const getPersonalizedResponse = (baseContent: string, emotion: Message['emotion']) => {
       if (!selectedModel) return { content: baseContent, emotion };
@@ -132,8 +182,8 @@ const ChatInterface = ({ selectedModel }: ChatInterfaceProps) => {
     setIsTyping(true);
 
     // Simulate typing delay
-    setTimeout(() => {
-      const response = generateResponse(inputValue);
+    setTimeout(async () => {
+      const response = await generateResponse(inputValue);
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: response.content,
